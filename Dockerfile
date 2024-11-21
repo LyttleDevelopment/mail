@@ -12,12 +12,18 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /opt
 RUN git clone https://github.com/mailcow/mailcow-dockerized.git
 
-# Set environment variables (adjust these as needed)
+# Set working directory to Mailcow
 WORKDIR /opt/mailcow-dockerized
-COPY mailcow.conf .
+
+# Set required environment variables
+ENV TZ=UTC
+ENV SKIP_UNBOUND_HEALTHCHECK=n
+
+# Copy the prepared mailcow.conf file
+COPY mailcow.conf ./mailcow.conf
 
 # Expose necessary ports
-EXPOSE 25 587 993 110 995 143 443
+EXPOSE 25 587 993 110 995 143 443 80 443
 
 # Entry point to start Mailcow
-CMD ["docker-compose", "up"]
+CMD ["docker-compose", "up", "-d"]
