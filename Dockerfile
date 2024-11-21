@@ -18,12 +18,14 @@ WORKDIR /opt/mailcow-dockerized
 # Set required environment variables
 ENV TZ=UTC
 ENV SKIP_UNBOUND_HEALTHCHECK=n
+ENV IPV4_NETWORK=172.22.1
 
 # Copy the prepared mailcow.conf file
 COPY mailcow.conf ./mailcow.conf
 
-# Hardcode SKIP_UNBOUND_HEALTHCHECK in docker-compose.yml
+# Fix interpolation issues in docker-compose.yml
 RUN sed -i 's/SKIP_UNBOUND_HEALTHCHECK=\${SKIP_UNBOUND_HEALTHCHECK:-n}/SKIP_UNBOUND_HEALTHCHECK=n/' docker-compose.yml
+RUN sed -i 's/\${IPV4_NETWORK:-172.22.1}/172.22.1/' docker-compose.yml
 
 # Expose necessary ports
 EXPOSE 25 587 993 110 995 143 443 80 443
